@@ -1,19 +1,76 @@
-import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import Colors from '../../styles/colors.ts';
-import { IPost } from '../../entity/post/post.slice.ts';
+import { IPost, postActions } from '../../entity/post/post.slice.ts';
+import { AppRoutes } from '../../types/navigation.ts';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { postsApi } from '../../api/postsApi.ts';
 
+const PostCard = ({item}: { item: IPost }) => {
+    const dispatch = useDispatch()
+    const navigation: NavigationProp<ParamListBase> = useNavigation();
+    const {id, title, body} = item;
+    const [inputTitle, setInputTitle] = useState<string>(title);
+    const [inputBody, setInputBody] = useState<string>(body);
+    const [borderColor, setBorderColor] = useState<string>(Colors.GRAY_100);
+    const [borderWidth, setBorderWidth] = useState<number>( 1);
+    const [isEditable, setIsEditable] = useState<boolean>(false);
+    const onPressOpenPost = () => navigation.navigate(AppRoutes.SINGLE_POST, item);
 
-const PostCard = ({title, body}: IPost) => {
+    const onPressRemovePost = async () => {
+        try {
+            await postsApi.removePost(id);
+            dispatch(postActions.removePost(id))
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const onPressMakeEditable = async () => {
+        setIsEditable(!isEditable)
+        if (!isEditable) {
+            setBorderColor(Colors.ACCENT)
+        }
+
+        if (isEditable) {
+            const updatePost = {id, title: inputTitle, body: inputBody};
+            try {
+                const resp = await postsApi.updatePost(updatePost)
+                dispatch(postActions.updatePost(resp));
+                setBorderColor(Colors.GRAY_100);
+                setBorderWidth(1);
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
     return (
         <View style={styles.card}>
             <View style={styles.controls}>
-                <Button title={'Edit'}/>
-                <Button title={'X'}/>
+                <Button onPress={onPressMakeEditable} title={isEditable ? 'Save' : 'Edit'}/>
+                <Button onPress={onPressRemovePost} title={'X'}/>
             </View>
-            <View style={styles.content}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.body}>{body}</Text>
+            <View style={[{borderColor, borderWidth}, styles.content]}>
+                <TextInput
+                    editable={isEditable}
+                    multiline
+                    style={ styles.title}
+                    value={inputTitle}
+                    onChangeText={setInputTitle}
+                />
+                <TextInput
+                    editable={isEditable}
+                    multiline
+                    style={styles.body}
+                    value={inputBody}
+                    onChangeText={setInputBody}
+                />
+            </View>
+            <View style={styles.view}>
+                <Button onPress={onPressOpenPost} title="Comments"/>
+                <Button onPress={onPressOpenPost} title="View Post"/>
             </View>
         </View>
     );
@@ -42,6 +99,11 @@ const styles = StyleSheet.create({
     },
     body: {
         fontSize: 16,
+        color: Colors.BLACK,
+    },
+    view: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     }
 })
 

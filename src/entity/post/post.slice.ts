@@ -6,18 +6,18 @@ export interface IPost {
     body: string;
 }
 
-interface IComment {
+export interface IComment {
     id: number;
     postId: number;
     text: string;
 }
 
-export interface IPosState {
+export interface IPostSliceSchema {
     posts: IPost[]
     comments: IComment[]
 }
 
-const initialState: IPosState = {
+const initialState: IPostSliceSchema = {
     posts: [],
     comments: []
 };
@@ -26,10 +26,24 @@ export const postSlice = createSlice({
     name: 'post',
     initialState,
     reducers: {
-        addCard: (state, action: PayloadAction<number>) => state + action.payload,
-        removeCard: (state, action: PayloadAction<number>) => state + action.payload,
-        addComment: (state, action: PayloadAction<number>) => state + action.payload,
-        removeComment: (state, action: PayloadAction<number>) => state + action.payload,
+        setPosts: (state, action: PayloadAction<IPost[]>) => {
+            state.posts = action.payload;
+        },
+        setComments: (state, action: PayloadAction<IComment[]>) => {
+            state.comments = action.payload;
+        },
+        addPost: (state, action: PayloadAction<IPost>) => {
+            state.posts.push(action.payload)
+        },
+        removePost: (state, action: PayloadAction<number>) => {
+            state.posts = state.posts.filter((card) => card.id !== action.payload)
+        },
+        updatePost: (state, action: PayloadAction<IPost>) => {
+            const post = action.payload
+            state.posts = state.posts.map((p) => p.id === post.id ? post : p)
+        },
+        // addPostComment: (state, action: PayloadAction<number>) => state + action.payload,
+        // removePostComment: (state, action: PayloadAction<number>) => state + action.payload,
     },
 })
 

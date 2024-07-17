@@ -10,7 +10,7 @@ export type MainStackParamList = {
 
 export type PostsStackParamList = {
     PostsList: undefined;
-    SinglePost: { item: IPost };
+    SinglePost: IPost;
 };
 
 export enum AppRoutes {
