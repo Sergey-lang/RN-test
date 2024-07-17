@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { StatusBar, } from 'react-native';
-import { StoreProvider } from './Providers/StoreProvider';
+import { StoreProvider } from './src/providers/StoreProvider';
 import Navigation from './src/navigation/Navigation.tsx';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -15,7 +15,7 @@ function App(): React.JSX.Element {
 
     return (
         <StoreProvider>
-            <SafeAreaProvider>
+            <SafeAreaProvider >
                 <StatusBar/>
                 <Navigation/>
             </SafeAreaProvider>

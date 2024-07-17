@@ -1,5 +1,5 @@
-import { IPost } from '../entity/post/post.slice.ts';
 import axios from 'axios';
+import { IPost } from '../types';
 
 const BASE_URL = 'https://my-json-server.typicode.com/Sergey-lang/RN-test'
 

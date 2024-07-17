@@ -3,7 +3,6 @@ import Svg, { SvgProps, Path } from 'react-native-svg';
 
 function ChatIcon(props: SvgProps) {
   return (
-    // @ts-ignore
     <Svg fill="currentColor" {...props} viewBox={'0 0 15 13'}>
       <Path
         fillRule="evenodd"

@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
-import Colors from '../../styles/colors.ts';
-import { IPost, postActions } from '../../entity/post/post.slice.ts';
-import { AppRoutes } from '../../types/navigation.ts';
+import { Button, Keyboard, StyleSheet, TextInput, View } from 'react-native';
+import Colors from '../../../../styles/colors.ts';
+import { postActions } from '../../slices/post.slice.ts';
+import { AppRoutes } from '../../../../types/navigation.ts';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { postsApi } from '../../api/postsApi.ts';
+import { IPost } from '../../types';
+import { CommentsWrapper } from '../CommentsWrapper/CommentsWrapper.tsx';
 
-const PostCard = ({item}: { item: IPost }) => {
+export const PostCard = ({item}: { item: IPost }) => {
     const dispatch = useDispatch()
     const navigation: NavigationProp<ParamListBase> = useNavigation();
     const {id, title, body} = item;
     const [inputTitle, setInputTitle] = useState<string>(title);
     const [inputBody, setInputBody] = useState<string>(body);
     const [borderColor, setBorderColor] = useState<string>(Colors.GRAY_100);
-    const [borderWidth, setBorderWidth] = useState<number>( 1);
+    const [borderWidth, setBorderWidth] = useState<number>(1);
     const [isEditable, setIsEditable] = useState<boolean>(false);
+    const [isOpenedComments, setIsOpenedComments] = useState<boolean>(false);
     const onPressOpenPost = () => navigation.navigate(AppRoutes.SINGLE_POST, item);
 
     const onPressRemovePost = async () => {
@@ -25,6 +28,10 @@ const PostCard = ({item}: { item: IPost }) => {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    const onPressOpenComments = async () => {
+        setIsOpenedComments((prev) => !prev);
     }
 
     const onPressMakeEditable = async () => {
@@ -56,7 +63,7 @@ const PostCard = ({item}: { item: IPost }) => {
                 <TextInput
                     editable={isEditable}
                     multiline
-                    style={ styles.title}
+                    style={styles.title}
                     value={inputTitle}
                     onChangeText={setInputTitle}
                 />
@@ -69,9 +76,12 @@ const PostCard = ({item}: { item: IPost }) => {
                 />
             </View>
             <View style={styles.view}>
-                <Button onPress={onPressOpenPost} title="Comments"/>
+                <Button onPress={onPressOpenComments} title="Comments"/>
                 <Button onPress={onPressOpenPost} title="View Post"/>
             </View>
+            {isOpenedComments && (
+                <CommentsWrapper postId={id}/>
+            )}
         </View>
     );
 };
@@ -90,7 +100,8 @@ const styles = StyleSheet.create({
     },
     controls: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        marginLeft: 'auto',
+        gap: 10
     },
     content: {},
     title: {
@@ -106,5 +117,3 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     }
 })
-
-export default PostCard;

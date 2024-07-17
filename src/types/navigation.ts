@@ -1,4 +1,7 @@
-import { IPost } from '../entity/post/post.slice.ts';
+import { IPost } from '../entity/post';
+import { SvgProps } from 'react-native-svg';
+import { ReactElement } from 'react';
+import ChatIcon from '../components/svg/ChatIcon.tsx';
 
 export type RootStackParamList = {
     MainStack: undefined;
@@ -22,3 +25,21 @@ export enum AppRoutes {
 export enum AppStacks {
     MAIN = 'MainStack',
 }
+
+export type TypeRootStackParamsList = {
+    Posts: undefined;
+};
+
+export interface ITabItem {
+    screenTitle: keyof TypeRootStackParamsList;
+    icon: (props: SvgProps) => ReactElement;
+    label: string;
+}
+
+export const TABS_LIST: ITabItem[] = [
+    {
+        screenTitle: 'Posts',
+        icon: ChatIcon,
+        label: 'Posts',
+    },
+];
