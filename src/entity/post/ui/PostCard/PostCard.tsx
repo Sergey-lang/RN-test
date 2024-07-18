@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, TextInput, View } from 'react-native';
+import { Button, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../../../../styles/colors.ts';
 import { postActions } from '../../slices/post.slice.ts';
 import { AppRoutes } from '../../../../types/navigation.ts';
@@ -55,6 +55,7 @@ export const PostCard = ({item}: { item: IPost }) => {
 
     return (
         <View style={styles.card}>
+            <TouchableOpacity style={styles.touchable} onPress={onPressOpenComments}>
             <View style={styles.controls}>
                 <Button onPress={onPressMakeEditable} title={isEditable ? 'Save' : 'Edit'}/>
                 <Button onPress={onPressRemovePost} title={'X'}/>
@@ -76,12 +77,12 @@ export const PostCard = ({item}: { item: IPost }) => {
                 />
             </View>
             <View style={styles.view}>
-                <Button onPress={onPressOpenComments} title="Comments"/>
                 <Button onPress={onPressOpenPost} title="View Post"/>
             </View>
             {isOpenedComments && (
                 <CommentsWrapper postId={id}/>
             )}
+            </TouchableOpacity>
         </View>
     );
 };
@@ -96,6 +97,8 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         paddingVertical: 20,
         paddingHorizontal: 10,
+    },
+    touchable: {
         gap: 10,
     },
     controls: {
@@ -113,7 +116,6 @@ const styles = StyleSheet.create({
         color: Colors.BLACK,
     },
     view: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        marginLeft: 'auto',
     }
 })
